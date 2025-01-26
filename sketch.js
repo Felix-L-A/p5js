@@ -28,7 +28,7 @@ function setup() {
         statusText = "Fehler beim Empfangen der GPS-Daten.";
       },
       {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false,
         maximumAge: 0,
         timeout: 5000
       }
