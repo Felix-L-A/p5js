@@ -21,7 +21,7 @@ function setup() {
         if (speed === null) {
           speed = 0; // Kann "null" zurückgeben, wenn nicht verfügbar
         }
-        statusText = "GPS-Daten empfangen!";
+        statusText = "Los gehts!";
       },
       error => {
         console.error(error);
@@ -43,12 +43,12 @@ function draw() {
   fill(1);
   
   // Zeige Status und (falls verfügbar) Latitude, Longitude, Speed an
-  text(statusText, width / 2, 40);
+  text(statusText, width / 2, 60);
   
-  text(`Breitengrad: ${latitude.toFixed(5)}`, width / 2, 80);
-  text(`Längengrad: ${longitude.toFixed(5)}`, width / 2, 110);
+  text(`Breitengrad: ${latitude.toFixed(5)}`, width / 2, 120);
+  text(`Längengrad: ${longitude.toFixed(5)}`, width / 2, 180);
   
   // Geschwindigkeit kommt von der API in m/s, ggf. in km/h umrechnen ( * 3.6 )
   let speedKmh = (speed * 3.6).toFixed(2);
-  text(`Geschwindigkeit: ${speedKmh} km/h`, width / 2, 140);
+  text(`Geschwindigkeit: ${speedKmh} km/h`, width / 2, 240);
 }
