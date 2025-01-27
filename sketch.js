@@ -40,7 +40,7 @@ function setup() {
 
 function draw() {
   background(420);
-  fill(1);
+  fill(0);
   
   // Zeige Status und (falls verfügbar) Latitude, Longitude, Speed an
   text(statusText, width / 2, 60);
