@@ -6,7 +6,7 @@ let statusText = "Starte...";
 function setup() {
   createCanvas(600, 400);
   textAlign(CENTER, CENTER);
-  textSize(20);
+  textSize(40);
   
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
