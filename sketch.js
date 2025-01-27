@@ -36,6 +36,7 @@ function setup() {
   } else {
     statusText = "Geolocation wird nicht unterstützt.";
   }
+  delay(1000);
 }
 
 function draw() {
@@ -51,5 +52,4 @@ function draw() {
   // Geschwindigkeit kommt von der API in m/s, ggf. in km/h umrechnen ( * 3.6 )
   let speedKmh = (speed * 3.6).toFixed(2);
   text(`Geschwindigkeit: ${speedKmh} km/h`, width / 2, 240);
-  delay(1000);
 }
