@@ -4,9 +4,9 @@ let speed = 0;      // Geschwindigkeit in m/s (kommt über die Geolocation-API)
 let statusText = "Starte...";
 
 function setup() {
-  createCanvas(400, 200);
+  createCanvas(600, 400);
   textAlign(CENTER, CENTER);
-  textSize(16);
+  textSize(20);
   
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
