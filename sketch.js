@@ -39,7 +39,7 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(420);
   fill(0);
   
   // Zeige Status und (falls verfügbar) Latitude, Longitude, Speed an
