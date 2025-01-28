@@ -17,7 +17,7 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
-        statusText = "GPS-Daten empfangen!";
+        statusText = "Los geht's!";
       },
       (error) => {
         console.error(error);
