@@ -8,7 +8,7 @@ let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
 function setup() {
-  createCanvas(800, 400); // 2D-Canvas
+  createCanvas(600, 400); // 2D-Canvas
   textFont('sans-serif');
   textSize(16);
 
@@ -106,7 +106,7 @@ function draw2DOverlay() {
 
   // Versionsnummer unten links anzeigen
   textSize(10); // Kleine Schriftgröße
-  text("version 1.8", 10, height - 10); // Position unten links
+  text("version 1.9", 10, height - 10); // Position unten links
 
   pop();
 }
@@ -157,6 +157,7 @@ function drawIsometricWindrose() {
   }
 
   // Rote Nadel (als Dreieck)
+  
   fill(255, 0, 0); // Rote Füllfarbe
   noStroke();
   let needleHeight = 40; // Höhe des Dreiecks
