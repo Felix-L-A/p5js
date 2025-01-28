@@ -82,11 +82,12 @@ function drawCourseText() {
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
   textStyle(BOLD);
-  text(`bearing: ${headingGyro.toFixed(0)}°`, 0, 0); // Zentrierter Text
+  text(`heading: ${headingGyro.toFixed(0)}°`, 0, 0); // Zentrierter Text
   pop();
 }
 
 function draw2DOverlay() {
+  push();
   fill(0);
   textAlign(LEFT, CENTER);
 
@@ -106,9 +107,12 @@ function draw2DOverlay() {
   // Versionsnummer unten links anzeigen
   textSize(10); // Kleine Schriftgröße
   text("version 1.8", 10, height - 10); // Position unten links
+
+  pop();
 }
 
 function drawIsometricWindrose() {
+  push();
   translate(width / 2, height / 2 + 50); // Mittelpunkt der Windrose
   let tilt = 0.5; // Neigungsfaktor für 3D-Effekt
   let radius = 150;
@@ -168,7 +172,7 @@ function drawIsometricWindrose() {
 
   // Zeichne das Dreieck
   triangle(x1, y1, x2, y2, x3, y3);
-
+pop();
 }
 
 function drawInclinationIndicator() {
