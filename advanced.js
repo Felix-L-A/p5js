@@ -2,6 +2,7 @@ let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
 let headingGPS = 0; // Bewegungsrichtung basierend auf GPS
+let altitudeGPS = 0; // Höhe basierend auf GPS
 let headingGyro = 0; // Bewegungsrichtung basierend auf Gyroskop
 let rotationY = 0; // Neigung (Y-Achse)
 let statusText = "Starte...";
@@ -20,6 +21,7 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
+        altitudeGPS = position.coords.altitude;
         if (position.coords.heading !== null) {
           headingGPS = position.coords.heading; // Bewegungsrichtung in Grad
         }
@@ -76,7 +78,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 2.2", 20, height - 20); // Position unten links
+  text("version 2.3", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -101,6 +103,7 @@ function draw2DOverlay() {
   textStyle(BOLD);
   text(`lon: ${latitude.toFixed(5)}`, 20, 50);
   text(`lat: ${longitude.toFixed(5)}`, 20, 80);
+  text(`altitude: ${altitudeGPS} m`, 20, 110);
 }
 
 function drawIsometricWindrose() {
