@@ -101,8 +101,8 @@ function draw2DOverlay() {
   // Statusinformationen anzeigen
   text(statusText, 20, 20);
   textStyle(BOLD);
-  text(`lon: ${latitude.toFixed(5)}`, 20, 50);
-  text(`lat: ${longitude.toFixed(5)}`, 20, 80);
+  text(`lon: ${latitude.toFixed(5)}°`, 20, 50);
+  text(`lat: ${longitude.toFixed(5)}°`, 20, 80);
   text(`altitude: ${altitudeGPS.toFixed(0)} m`, 20, 110);
 }
 
