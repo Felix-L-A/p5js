@@ -10,7 +10,7 @@ let permissionGranted = false; // Zugriff auf Sensoren
 function setup() {
   createCanvas(windowWidth, 400); // 2D-Canvas
   textFont('sans-serif');
-  textSize(20);
+  textSize(24);
 
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
@@ -76,7 +76,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 2.1", 20, height - 20); // Position unten links
+  text("version 2.2", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -84,7 +84,7 @@ function drawCourseText() {
   translate(width / 2, height / 2 - 60); // Position über der Windrose
   fill(0); // Farbe des Textes (Schwarz)
   textAlign(CENTER, CENTER);
-  textSize(20); // Schriftgröße
+  textSize(24); // Schriftgröße
   textStyle(BOLD);
   text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, 0);
   translate(0,110); 
@@ -107,7 +107,7 @@ function drawIsometricWindrose() {
   push();
   translate(width / 2, height / 2 + 50); // Mittelpunkt der Windrose
   let tilt = 0.5; // Neigungsfaktor für 3D-Effekt
-  let radius = 150;
+  let radius = 200;
 
   // Statische Windrose (Ellipse bleibt fest)
   stroke(0);
@@ -162,8 +162,8 @@ function drawInclinationIndicator() {
   fill(map(abs(rotationY), 0, 30, 0, 255), 255 - map(abs(rotationY), 0, 30, 0, 255), 0);
   ellipse(positionX, 0, 20, 20);
   fill(0);
-  textSize(16);
-  textStyle(BOLD);
+  textSize(20);
+  textStyle(NORMAL);
   text(`heel: ${rotationY.toFixed(1)}°`, -30, 30);
   pop();
 }
