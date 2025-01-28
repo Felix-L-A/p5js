@@ -1,96 +1,114 @@
 let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
-let statusText = "Starte...";
 let heading = 0; // Kursrichtung in Grad (0 bis 360)
-
-// Eventlistener für das Gyroskop
-if (window.DeviceOrientationEvent) {
-  window.addEventListener("deviceorientation", (event) => {
-    heading = event.alpha || 0; // Kursrichtung
-  });
-} else {
-  statusText = "Gyroskop wird nicht unterstützt.";
-}
+let statusText = "Starte...";
 
 function setup() {
-  createCanvas(600, 400, WEBGL); // WEBGL für 3D-Darstellung der Windrose
-  textFont('Arial');
+  createCanvas(600, 400); // 2D-Canvas
+  textFont('sans-serif');
+  textSize(16);
+
+  // Prüfen, ob Geolocation verfügbar ist
+  if ("geolocation" in navigator) {
+    statusText = "GPS wird angefragt...";
+    navigator.geolocation.watchPosition(
+      (position) => {
+        latitude = position.coords.latitude;
+        longitude = position.coords.longitude;
+        speed = position.coords.speed || 0; // Geschwindigkeit in m/s
+        statusText = "GPS-Daten empfangen!";
+      },
+      (error) => {
+        console.error(error);
+        statusText = "Fehler beim Empfangen der GPS-Daten.";
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000,
+      }
+    );
+  } else {
+    statusText = "Geolocation wird nicht unterstützt.";
+  }
+
+  // Prüfen, ob DeviceOrientation verfügbar ist
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", (event) => {
+      heading = event.alpha || 0; // Kursrichtung
+    });
+  } else {
+    statusText = "Gyroskop wird nicht unterstützt.";
+  }
 }
 
 function draw() {
   background(30);
 
-  // 2D-Ebene für Text
+  // 2D-Overlay für GPS und Geschwindigkeitsanzeige
   draw2DOverlay();
 
-  // 3D-Ebene für die geneigte Windrose
-  drawTiltedWindrose();
+  // Isometrische Windrose
+  drawIsometricWindrose();
 }
 
 function draw2DOverlay() {
-  // Schalte auf 2D-Rendering um
-  resetMatrix();
-  noLights(); // Deaktiviere 3D-Licht, um Text besser darzustellen
   fill(255);
   textAlign(LEFT, CENTER);
-  textSize(16);
 
-  // Anzeige von Status, Position und Geschwindigkeit
+  // Statusinformationen anzeigen
   text(statusText, 20, 20);
   text(`Breitengrad: ${latitude.toFixed(5)}`, 20, 50);
   text(`Längengrad: ${longitude.toFixed(5)}`, 20, 80);
+
+  // Geschwindigkeit in km/h anzeigen
   let speedKmh = (speed * 3.6).toFixed(2);
   text(`Geschwindigkeit: ${speedKmh} km/h`, 20, 110);
 
-  // Anzeige der aktuellen Gradzahl
+  // Kurs in Grad anzeigen
   textSize(20);
-  text(`Kurs: ${heading.toFixed(0)}°`, width - 200, 50);
+  text(`Kurs: ${heading.toFixed(0)}°`, width - 150, 50);
 }
 
-function drawTiltedWindrose() {
-  // 3D-Darstellung der Windrose
-  push();
-  translate(0, 50, -300); // Position der Windrose
-  rotateX(radians(60)); // Neigung der Windrose für räumlichen Eindruck
-  rotateZ(radians(-heading)); // Drehung der Windrose entsprechend der Kursrichtung
+function drawIsometricWindrose() {
+  translate(width / 2, height / 2 + 50); // Mittelpunkt der Windrose
+  let tilt = 0.5; // Neigungsfaktor für 3D-Effekt
+  let radius = 150;
 
-  // Außenkreis der Windrose
+  // Windrose rotieren basierend auf dem Kurs
+  rotate(-radians(heading));
+
+  // Außenkreis der Windrose (als Ellipse für Neigung)
   stroke(255);
   noFill();
-  ellipse(0, 0, 300, 300);
+  ellipse(0, 0, radius * 2, radius * 2 * tilt);
 
   // Gradmarkierungen
   for (let i = 0; i < 360; i += 20) {
     let angle = radians(i);
-    let x1 = 140 * cos(angle);
-    let y1 = 140 * sin(angle);
-    let x2 = 150 * cos(angle);
-    let y2 = 150 * sin(angle);
+    let x1 = radius * cos(angle);
+    let y1 = radius * sin(angle) * tilt; // Neigung auf Y-Achse
+    let x2 = (radius + 10) * cos(angle);
+    let y2 = (radius + 10) * sin(angle) * tilt;
 
-    // Linien
+    // Linie zeichnen
     stroke(255);
     line(x1, y1, x2, y2);
 
-    // Gradzahl (nur bei größeren Markierungen)
+    // Gradzahl an größeren Markierungen
     if (i % 40 === 0) {
-      push();
       fill(255);
       noStroke();
-      let xText = 170 * cos(angle);
-      let yText = 170 * sin(angle);
-      translate(xText, yText, 0); // Position der Gradzahlen
-      rotateZ(-radians(-heading)); // Rotiere die Gradzahlen passend zur Richtung
-      textSize(14);
-      text(i, 0, 0);
-      pop();
+      let xText = (radius + 20) * cos(angle);
+      let yText = (radius + 20) * sin(angle) * tilt;
+      textAlign(CENTER, CENTER);
+      text(i, xText, yText);
     }
   }
 
   // Rote Nadel (zeigt immer in Fahrrichtung)
   stroke(255, 0, 0);
   strokeWeight(3);
-  line(0, 0, 0, -120); // Nadel zeigt nach oben (Fahrtrichtung)
-  pop();
+  line(0, 0, 0, -radius * tilt); // Nadel nach oben
 }
-
