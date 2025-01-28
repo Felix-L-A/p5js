@@ -8,7 +8,7 @@ let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
 function setup() {
-  createCanvas(600, 400); // 2D-Canvas
+  createCanvas(windowWidth, windowHeight); // 2D-Canvas
   textFont('sans-serif');
   textSize(16);
 
