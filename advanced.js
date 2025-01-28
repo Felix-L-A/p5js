@@ -3,6 +3,21 @@ let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
 let heading = 0; // Kursrichtung in Grad (0 bis 360)
 let statusText = "Starte...";
+let permissionGranted = false; // Zugriff auf Sensoren
+
+function setup() {
+  createCanvas(600, 400); // 2D-Canvas
+  textFont('sans-serif');
+  textSize(16);
+
+  // Prüfe, ob iOS eine Berechtigung erfordert
+  if (typeof(DeviceOrientationEvent) !== 'undefined' && typeof(DeviceOrientationEvent.requestPermission) === 'function') {
+    createPermissionButton(); // Button für iOS
+  } else {
+    // Android/Chrome oder andere Browser (keine Berechtigung erforderlich)
+    permissionGranted = true;
+    setupOrientationListener(); // Bewegungssensor aktivieren
+  }
 
 function setup() {
   createCanvas(600, 400); // 2D-Canvas
@@ -46,6 +61,15 @@ function setup() {
 function draw() {
   background(30);
 
+    // Wenn keine Berechtigung für Sensoren erteilt wurde
+  if (!permissionGranted) {
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(20);
+    text("Bitte Sensorzugriff erlauben", width / 2, height / 2);
+    return;
+  }
+  
   // Kursanzeige über der Windrose
   drawCourseText();
 
