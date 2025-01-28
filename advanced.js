@@ -114,7 +114,7 @@ function drawIsometricWindrose() {
 
   // Rotierende Gradmarkierungen und Gradzahlen entlang der Ellipse
   for (let i = 0; i < 360; i += 20) {
-    let adjustedAngle = (i - headingGyro + 360) % 360; // Gradmarkierungen basierend auf Kurs
+    let adjustedAngle = (i - headingGyro - 90 + 360) % 360; // Gradmarkierungen basierend auf Kurs
     let angle = radians(adjustedAngle);
 
     // Positionen entlang der Ellipse
