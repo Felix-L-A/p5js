@@ -17,7 +17,7 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
-        statusText = "Los geht's!";
+        statusText = "GPS-Daten empfangen!";
       },
       (error) => {
         console.error(error);
@@ -46,11 +46,24 @@ function setup() {
 function draw() {
   background(30);
 
-  // 2D-Overlay für GPS und Geschwindigkeitsanzeige
+  // Kursanzeige über der Windrose
+  drawCourseText();
+
+  // 2D-Overlay für GPS und Geschwindigkeit
   draw2DOverlay();
 
   // Isometrische Windrose
   drawIsometricWindrose();
+}
+
+function drawCourseText() {
+  push();
+  translate(width / 2, height / 2 + 50); // Position über der Windrose
+  fill(255); // Farbe des Textes (Weiß)
+  textAlign(CENTER, CENTER);
+  textSize(20); // Schriftgröße
+  text(`Kurs: ${heading.toFixed(0)}°`, 0, 0); // Zentrierter Text
+  pop();
 }
 
 function draw2DOverlay() {
@@ -65,10 +78,6 @@ function draw2DOverlay() {
   // Geschwindigkeit in km/h anzeigen
   let speedKmh = (speed * 3.6).toFixed(2);
   text(`Geschwindigkeit: ${speedKmh} km/h`, 20, 110);
-
-  // Kurs in Grad anzeigen
-  textSize(20);
-  text(`Kurs: ${heading.toFixed(0)}°`, width - 150, 50);
 }
 
 function drawIsometricWindrose() {
@@ -84,15 +93,17 @@ function drawIsometricWindrose() {
   noFill();
   ellipse(0, 0, radius * 2, radius * 2 * tilt);
 
+
+    
   // Gradmarkierungen
   for (let i = 0; i < 360; i += 20) {
-    fill(200, 100, 50); // Farbe der Gradzahlen (RGB)
-    let distance = radius + 30; // Abstand der Gradzahlen zur Windrose
     let angle = radians(i);
-    let x1 = radius * cos(angle);
-    let y1 = radius * sin(angle) * tilt; // Neigung auf Y-Achse
-    let x2 = (radius + 10) * cos(angle);
-    let y2 = (radius + 10) * sin(angle) * tilt;
+  let x1 = (radius - 10) * cos(angle); // Startpunkt näher zur Mitte
+  let y1 = (radius - 10) * sin(angle) * tilt; // Neigung auf Y-Achse
+    let x2 = (radius + 5) * cos(angle);
+    let y2 = (radius + 5) * sin(angle) * tilt;   
+    
+
 
     // Linie zeichnen
     stroke(255);
@@ -100,17 +111,37 @@ function drawIsometricWindrose() {
 
     // Gradzahl an größeren Markierungen
     if (i % 40 === 0) {
-      fill(255);
+      fill(255); // Farbe der Gradzahlen
       noStroke();
-      let xText = (radius + 20) * cos(angle);
-      let yText = (radius + 20) * sin(angle) * tilt;
+      textSize(14); // Schriftgröße der Gradzahlen
+      let distance = radius + 30; // Abstand der Gradzahlen zur Windrose
+      let xText = distance * cos(angle); // X-Position der Gradzahl
+      let yText = distance * sin(angle) * tilt; // Y-Position der Gradzahl (mit Neigung)
       textAlign(CENTER, CENTER);
-      text(i, xText, yText);
+      text(i, xText, yText); // Zeichne die Gradzahl
     }
   }
 
-  // Rote Nadel (zeigt immer in Fahrrichtung)
+/*  // Rote Nadel (zeigt immer in Fahrrichtung)
   stroke(255, 0, 0);
   strokeWeight(3);
   line(0, 0, 0, -radius * tilt); // Nadel nach oben
+  */
+  
+  // Rote Nadel (als Dreieck)
+fill(255, 0, 0); // Rote Füllfarbe
+noStroke();
+let needleHeight = 40; // Höhe des Dreiecks
+let needleWidth = 20; // Breite des Dreiecks
+
+// Dreieckspunkte (nach oben zeigend)
+let x1 = 0; // Spitze des Dreiecks
+let y1 = -(radius * tilt+35) + needleHeight; // Spitze leicht oberhalb des Windrosenradius
+let x2 = -needleWidth / 2; // Linker Eckpunkt
+let y2 = (radius * tilt-100); // Basislinie unten
+let x3 = needleWidth / 2; // Rechter Eckpunkt
+let y3 = (radius * tilt-100); // Basislinie unten
+
+// Zeichne das Dreieck
+triangle(x1, y1, x2, y2, x3, y3);
 }
