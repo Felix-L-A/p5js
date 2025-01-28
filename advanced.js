@@ -2,6 +2,7 @@ let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
 let heading = 0; // Bewegungsrichtung basierend auf GPS
+let rotationY = 0; // Neigung (Y-Achse)
 let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
@@ -36,17 +37,26 @@ function setup() {
   } else {
     statusText = "Geolocation wird nicht unterstützt.";
   }
+
+  // Prüfen, ob iOS eine Berechtigung erfordert
+  if (typeof(DeviceOrientationEvent) !== 'undefined' && typeof(DeviceOrientationEvent.requestPermission) === 'function') {
+    createPermissionButton(); // Button für iOS
+  } else {
+    // Android/Chrome oder andere Browser (keine Berechtigung erforderlich)
+    permissionGranted = true;
+    setupOrientationListener(); // Bewegungssensor aktivieren
+  }
 }
 
 function draw() {
   background(30);
 
-  // Wenn GPS-Daten fehlen
+  // Wenn keine Berechtigung für Sensoren erteilt wurde
   if (!permissionGranted) {
     fill(255);
     textAlign(CENTER, CENTER);
     textSize(20);
-    text("Bitte GPS-Daten erlauben", width / 2, height / 2);
+    text("Bitte Sensorzugriff erlauben", width / 2, height / 2);
     return;
   }
 
@@ -58,6 +68,9 @@ function draw() {
 
   // Isometrische Windrose
   drawIsometricWindrose();
+
+  // Neigungsanzeiger (Wasserlibelle)
+  drawInclinationIndicator();
 }
 
 function drawCourseText() {
@@ -85,7 +98,7 @@ function draw2DOverlay() {
 
   // Versionsnummer unten links anzeigen
   textSize(10); // Kleine Schriftgröße
-  text("Version 1.4", 10, height - 10); // Position unten links
+  text("Version 1.5", 10, height - 10); // Position unten links
 }
 
 function drawIsometricWindrose() {
@@ -150,7 +163,60 @@ function drawIsometricWindrose() {
   triangle(x1, y1, x2, y2, x3, y3);
 }
 
+function drawInclinationIndicator() {
+  push();
+  translate(width / 2, height - 80); // Position unter der Windrose
+
+  let indicatorWidth = 300; // Breite der Wasserlibelle
+  let indicatorHeight = 10; // Höhe der Libelle (Linie)
+  let maxInclination = 30; // Maximaler Neigungswert für volle Anzeige
+  let positionX = map(rotationY, -maxInclination, maxInclination, -indicatorWidth / 2, indicatorWidth / 2);
+
+  // Hintergrundlinie (Libelle)
+  stroke(255);
+  strokeWeight(2);
+  line(-indicatorWidth / 2, 0, indicatorWidth / 2, 0); // Horizontale Linie
+
+  // Farbe des Indikators basierend auf der Neigung
+  let colorValue = map(abs(rotationY), 0, maxInclination, 0, 255); // Von Grün zu Rot
+  let fillColor = color(colorValue, 255 - colorValue, 0); // Grün bis Rot
+  fill(fillColor);
+
+  // Beweglicher Punkt
+  noStroke();
+  ellipse(positionX, 0, 20, 20); // Punkt basierend auf Y-Achse
+
+  // Y-Achsen-Wert anzeigen
+  textAlign(CENTER, CENTER);
+  fill(255);
+  textSize(16);
+  text(`Neigung (Y): ${rotationY.toFixed(1)}°`, 0, 30); // Text unter der Linie
+  pop();
+}
+
+function createPermissionButton() {
+  let button = createButton("Sensorzugriff anfordern");
+  button.style("font-size", "24px");
+  button.center();
+  button.mousePressed(() => {
+    DeviceOrientationEvent.requestPermission()
+      .then((response) => {
+        if (response === 'granted') {
+          permissionGranted = true;
+          setupOrientationListener(); // Eventlistener hinzufügen
+          button.remove(); // Button entfernen
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Sensorzugriff verweigert.");
+      });
+  });
+}
+
 function setupOrientationListener() {
   // Eventlistener für Bewegungssensor
-  // Nicht notwendig, da GPS verwendet wird
+  window.addEventListener("deviceorientation", (event) => {
+    rotationY = event.beta || 0; // Neigung (Y-Achse)
+  });
 }
