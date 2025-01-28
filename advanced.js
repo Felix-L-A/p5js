@@ -76,7 +76,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 1.9", 20, height - 20); // Position unten links
+  text("version 2.0", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -112,6 +112,14 @@ function drawIsometricWindrose() {
   noFill();
   ellipse(0, 0, radius * 2, radius * 2 * tilt);
 
+    // Rote Nadel (als Dreieck)
+  fill(255, 0, 0); // Rote Füllfarbe
+  noStroke();
+  let needleHeight = 40; // Höhe des Dreiecks
+  let needleWidth = 20; // Breite des Dreiecks
+  triangle(0, -(radius * tilt), -needleWidth / 2, -(radius * tilt) + needleHeight, 
+           needleWidth / 2, -(radius * tilt) + needleHeight);
+
   // Rotierende Gradmarkierungen und Gradzahlen entlang der Ellipse
   for (let i = 0; i < 360; i += 20) {
     let adjustedAngle = (i - headingGyro - 90 + 360) % 360; // Gradmarkierungen basierend auf Kurs
@@ -139,13 +147,7 @@ function drawIsometricWindrose() {
       line((radius - 15) * cos(angle), (radius - 15) * sin(angle) * tilt, xInner, yInner);
     }
   }
-
-  // Rote Nadel (als Dreieck)
-  fill(255, 0, 0); // Rote Füllfarbe
-  noStroke();
-  let needleHeight = 40; // Höhe des Dreiecks
-  let needleWidth = 20; // Breite des Dreiecks
-  triangle(0, -(radius * tilt), -needleWidth / 2, -(radius * tilt) + needleHeight, needleWidth / 2, -(radius * tilt) + needleHeight);
+  
   pop();
 }
 
