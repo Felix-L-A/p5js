@@ -72,7 +72,7 @@ function drawCourseText() {
   fill(255); // Farbe des Textes (Weiß)
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
-  text(Kurs: ${heading.toFixed(0)}°, 0, 0); // Zentrierter Text
+  text(`Kurs: ${heading.toFixed(0)}°`, 0, 0); // Zentrierter Text
   pop();
 }
 
@@ -82,17 +82,16 @@ function draw2DOverlay() {
 
   // Statusinformationen anzeigen
   text(statusText, 20, 20);
-  text(Breitengrad: ${latitude.toFixed(5)}, 20, 50);
-  text(Längengrad: ${longitude.toFixed(5)}, 20, 80);
+  text(`Breitengrad: ${latitude.toFixed(5)}`, 20, 50);
+  text(`Längengrad: ${longitude.toFixed(5)}`, 20, 80);
 
   // Geschwindigkeit in km/h anzeigen
   let speedKmh = (speed * 3.6).toFixed(2);
-  text(Geschwindigkeit: ${speedKmh} km/h, 20, 110);
+  text(`Geschwindigkeit: ${speedKmh} km/h`, 20, 110);
 
-    // Versionsnummer unten links anzeigen
+  // Versionsnummer unten links anzeigen
   textSize(10); // Kleine Schriftgröße
-  text("Version 1.2", 10, height - 10); // Position unten links
-  
+  text("Version 1.3", 10, height - 10); // Position unten links
 }
 
 function drawIsometricWindrose() {
@@ -139,24 +138,23 @@ function drawIsometricWindrose() {
     }
   }
 
-// Rote Nadel (als Dreieck)
-fill(255, 0, 0); // Rote Füllfarbe
-noStroke();
-let needleHeight = 40; // Höhe des Dreiecks
-let needleWidth = 20; // Breite des Dreiecks
+  // Rote Nadel (als Dreieck)
+  fill(255, 0, 0); // Rote Füllfarbe
+  noStroke();
+  let needleHeight = 40; // Höhe des Dreiecks
+  let needleWidth = 20; // Breite des Dreiecks
 
-// Dreieckspunkte (nach oben zeigend)
-let x1 = 0; // Spitze des Dreiecks
-let y1 = -(radius * tilt+35) + needleHeight; // Spitze leicht oberhalb des Windrosenradius
-let x2 = -needleWidth / 2; // Linker Eckpunkt
-let y2 = (radius * tilt-100); // Basislinie unten
-let x3 = needleWidth / 2; // Rechter Eckpunkt
-let y3 = (radius * tilt-100); // Basislinie unten
+  // Dreieckspunkte (nach oben zeigend)
+  let x1 = 0; // Spitze des Dreiecks
+  let y1 = -(radius * tilt + 35) + needleHeight; // Spitze leicht oberhalb des Windrosenradius
+  let x2 = -needleWidth / 2; // Linker Eckpunkt
+  let y2 = (radius * tilt - 100); // Basislinie unten
+  let x3 = needleWidth / 2; // Rechter Eckpunkt
+  let y3 = (radius * tilt - 100); // Basislinie unten
 
-// Zeichne das Dreieck
-triangle(x1, y1, x2, y2, x3, y3);
+  // Zeichne das Dreieck
+  triangle(x1, y1, x2, y2, x3, y3);
 }
-
 
 function createPermissionButton() {
   let button = createButton("Sensorzugriff anfordern");
