@@ -7,7 +7,7 @@ let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
 function setup() {
-  createCanvas(600, 400); // 2D-Canvas
+  createCanvas(1000, 600); // 2D-Canvas
   textFont('sans-serif');
   textSize(16);
 
@@ -60,6 +60,9 @@ function draw() {
     return;
   }
 
+  // Neigungsanzeiger (Wasserlibelle)
+  drawInclinationIndicator();
+  
   // Kursanzeige über der Windrose
   drawCourseText();
 
@@ -69,8 +72,6 @@ function draw() {
   // Isometrische Windrose
   drawIsometricWindrose();
 
-  // Neigungsanzeiger (Wasserlibelle)
-  drawInclinationIndicator();
 }
 
 function drawCourseText() {
@@ -165,7 +166,7 @@ function drawIsometricWindrose() {
 
 function drawInclinationIndicator() {
   push();
-  translate(width / 2, height - 80); // Position unter der Windrose
+  translate(width / 2, height - 100); // Position unter der Windrose
 
   let indicatorWidth = 300; // Breite der Wasserlibelle
   let indicatorHeight = 10; // Höhe der Libelle (Linie)
@@ -190,7 +191,7 @@ function drawInclinationIndicator() {
   textAlign(CENTER, CENTER);
   fill(255);
   textSize(16);
-  text(`Neigung (Y): ${rotationY.toFixed(1)}°`, 0, 30); // Text unter der Linie
+  text(`Kränung: ${rotationY.toFixed(1)}°`, 0, 30); // Text unter der Linie
   pop();
 }
 
