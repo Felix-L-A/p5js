@@ -27,7 +27,7 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
-        statusText = "Los geht's!";
+        statusText = "GPS-Daten empfangen!";
       },
       (error) => {
         console.error(error);
@@ -42,21 +42,12 @@ function setup() {
   } else {
     statusText = "Geolocation wird nicht unterstützt.";
   }
-
-  // Prüfen, ob DeviceOrientation verfügbar ist
-  if (window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", (event) => {
-      heading = event.alpha || 0; // Kursrichtung
-    });
-  } else {
-    statusText = "Gyroskop wird nicht unterstützt.";
-  }
 }
 
 function draw() {
   background(30);
 
-    // Wenn keine Berechtigung für Sensoren erteilt wurde
+  // Wenn keine Berechtigung für Sensoren erteilt wurde
   if (!permissionGranted) {
     fill(255);
     textAlign(CENTER, CENTER);
@@ -64,7 +55,7 @@ function draw() {
     text("Bitte Sensorzugriff erlauben", width / 2, height / 2);
     return;
   }
-  
+
   // Kursanzeige über der Windrose
   drawCourseText();
 
@@ -77,7 +68,7 @@ function draw() {
 
 function drawCourseText() {
   push();
-  translate(width / 2, height / 2 + 50); // Position über der Windrose
+  translate(width / 2, height / 2 - 130); // Position über der Windrose
   fill(255); // Farbe des Textes (Weiß)
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
@@ -112,55 +103,66 @@ function drawIsometricWindrose() {
   noFill();
   ellipse(0, 0, radius * 2, radius * 2 * tilt);
 
-
-    
   // Gradmarkierungen
   for (let i = 0; i < 360; i += 20) {
     let angle = radians(i);
-  let x1 = (radius - 10) * cos(angle); // Startpunkt näher zur Mitte
-  let y1 = (radius - 10) * sin(angle) * tilt; // Neigung auf Y-Achse
-    let x2 = (radius + 5) * cos(angle);
-    let y2 = (radius + 5) * sin(angle) * tilt;   
-    
 
-
-    // Linie zeichnen
-    stroke(255);
-    line(x1, y1, x2, y2);
-
-    // Gradzahl an größeren Markierungen
+    // Alle 40°: Innen- und Außenstriche
     if (i % 40 === 0) {
-      fill(255); // Farbe der Gradzahlen
-      noStroke();
-      textSize(14); // Schriftgröße der Gradzahlen
-      let distance = radius + 30; // Abstand der Gradzahlen zur Windrose
-      let xText = distance * cos(angle); // X-Position der Gradzahl
-      let yText = distance * sin(angle) * tilt; // Y-Position der Gradzahl (mit Neigung)
-      textAlign(CENTER, CENTER);
-      text(i, xText, yText); // Zeichne die Gradzahl
+      let x1Inner = (radius - 20) * cos(angle);
+      let y1Inner = (radius - 20) * sin(angle) * tilt;
+      let x2Outer = radius * cos(angle);
+      let y2Outer = radius * sin(angle) * tilt;
+      stroke(255);
+      line(x1Inner, y1Inner, x2Outer, y2Outer);
+    } else {
+      // Alle 20°: Nur innenliegend
+      let x1Inner = (radius - 20) * cos(angle);
+      let y1Inner = (radius - 20) * sin(angle) * tilt;
+      let x2Inner = (radius - 10) * cos(angle);
+      let y2Inner = (radius - 10) * sin(angle) * tilt;
+      stroke(255);
+      line(x1Inner, y1Inner, x2Inner, y2Inner);
     }
   }
 
-/*  // Rote Nadel (zeigt immer in Fahrrichtung)
-  stroke(255, 0, 0);
-  strokeWeight(3);
-  line(0, 0, 0, -radius * tilt); // Nadel nach oben
-  */
-  
   // Rote Nadel (als Dreieck)
-fill(255, 0, 0); // Rote Füllfarbe
-noStroke();
-let needleHeight = 40; // Höhe des Dreiecks
-let needleWidth = 20; // Breite des Dreiecks
+  fill(255, 0, 0);
+  noStroke();
+  let needleHeight = 40;
+  let needleWidth = 20;
+  let x1 = 0;
+  let y1 = -(radius * tilt) + needleHeight;
+  let x2 = -needleWidth / 2;
+  let y2 = -(radius * tilt);
+  let x3 = needleWidth / 2;
+  let y3 = -(radius * tilt);
+  triangle(x1, y1, x2, y2, x3, y3);
+}
 
-// Dreieckspunkte (nach oben zeigend)
-let x1 = 0; // Spitze des Dreiecks
-let y1 = -(radius * tilt+35) + needleHeight; // Spitze leicht oberhalb des Windrosenradius
-let x2 = -needleWidth / 2; // Linker Eckpunkt
-let y2 = (radius * tilt-100); // Basislinie unten
-let x3 = needleWidth / 2; // Rechter Eckpunkt
-let y3 = (radius * tilt-100); // Basislinie unten
+function createPermissionButton() {
+  let button = createButton("Sensorzugriff anfordern");
+  button.style("font-size", "24px");
+  button.center();
+  button.mousePressed(() => {
+    DeviceOrientationEvent.requestPermission()
+      .then((response) => {
+        if (response === 'granted') {
+          permissionGranted = true;
+          setupOrientationListener(); // Eventlistener hinzufügen
+          button.remove(); // Button entfernen
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Sensorzugriff verweigert.");
+      });
+  });
+}
 
-// Zeichne das Dreieck
-triangle(x1, y1, x2, y2, x3, y3);
+function setupOrientationListener() {
+  // Eventlistener für Bewegungssensor
+  window.addEventListener("deviceorientation", (event) => {
+    heading = event.alpha || 0; // Kursrichtung
+  });
 }
