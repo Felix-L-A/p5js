@@ -17,7 +17,7 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
-        statusText = "GPS-Daten empfangen!";
+        statusText = "Los geht's!";
       },
       (error) => {
         console.error(error);
@@ -86,6 +86,8 @@ function drawIsometricWindrose() {
 
   // Gradmarkierungen
   for (let i = 0; i < 360; i += 20) {
+    fill(200, 100, 50); // Farbe der Gradzahlen (RGB)
+    let distance = radius + 30; // Abstand der Gradzahlen zur Windrose
     let angle = radians(i);
     let x1 = radius * cos(angle);
     let y1 = radius * sin(angle) * tilt; // Neigung auf Y-Achse
