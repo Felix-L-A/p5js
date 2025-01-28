@@ -19,11 +19,6 @@ function setup() {
     setupOrientationListener(); // Bewegungssensor aktivieren
   }
 
-function setup() {
-  createCanvas(600, 400); // 2D-Canvas
-  textFont('sans-serif');
-  textSize(16);
-
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
     statusText = "GPS wird angefragt...";
