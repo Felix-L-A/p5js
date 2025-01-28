@@ -10,7 +10,7 @@ let permissionGranted = false; // Zugriff auf Sensoren
 function setup() {
   createCanvas(windowWidth, 400); // 2D-Canvas
   textFont('sans-serif');
-  textSize(16);
+  textSize(20);
 
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
@@ -76,7 +76,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 2.0", 20, height - 20); // Position unten links
+  text("version 2.1", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -85,6 +85,7 @@ function drawCourseText() {
   fill(0); // Farbe des Textes (Schwarz)
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
+  textStyle(BOLD);
   text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, 0);
   translate(0,110); 
   text(`heading: ${headingGyro.toFixed(0)}°`, 0, 0); // Zentrierter Text
@@ -97,6 +98,7 @@ function draw2DOverlay() {
 
   // Statusinformationen anzeigen
   text(statusText, 20, 20);
+  textStyle(BOLD);
   text(`lon: ${latitude.toFixed(5)}`, 20, 50);
   text(`lat: ${longitude.toFixed(5)}`, 20, 80);
 }
@@ -146,8 +148,7 @@ function drawIsometricWindrose() {
       stroke(0);
       line((radius - 15) * cos(angle), (radius - 15) * sin(angle) * tilt, xInner, yInner);
     }
-  }
-  
+  }  
   pop();
 }
 
@@ -162,6 +163,7 @@ function drawInclinationIndicator() {
   ellipse(positionX, 0, 20, 20);
   fill(0);
   textSize(16);
+  textStyle(BOLD);
   text(`heel: ${rotationY.toFixed(1)}°`, -30, 30);
   pop();
 }
