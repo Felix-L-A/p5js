@@ -1,7 +1,7 @@
 let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
-let heading = 0; // Kursrichtung in Grad (0 bis 360)
+let rotationAngle = 0; // Winkel basierend auf rotationX
 let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
@@ -72,7 +72,7 @@ function drawCourseText() {
   fill(255); // Farbe des Textes (Weiß)
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
-  text(`Kurs: ${heading.toFixed(0)}°`, 0, 0); // Zentrierter Text
+  text(`Kurs: ${rotationAngle.toFixed(0)}°`, 0, 0); // Zentrierter Text
   pop();
 }
 
@@ -96,7 +96,7 @@ function drawIsometricWindrose() {
   let radius = 150;
 
   // Windrose rotieren basierend auf dem Kurs
-  rotate(-radians(heading));
+  rotate(radians(rotationAngle));
 
   // Außenkreis der Windrose (als Ellipse für Neigung)
   stroke(255);
@@ -163,6 +163,6 @@ function createPermissionButton() {
 function setupOrientationListener() {
   // Eventlistener für Bewegungssensor
   window.addEventListener("deviceorientation", (event) => {
-    heading = event.alpha || 0; // Kursrichtung
+    rotationAngle = event.beta || 0; // Kursrichtung
   });
 }
