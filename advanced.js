@@ -7,7 +7,7 @@ let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
 function setup() {
-  createCanvas(1000, 600); // 2D-Canvas
+  createCanvas(800, 400); // 2D-Canvas
   textFont('sans-serif');
   textSize(16);
 
@@ -76,7 +76,7 @@ function draw() {
 
 function drawCourseText() {
   push();
-  translate(width / 2, height / 2 - 130); // Position über der Windrose
+  translate(width / 2, height / 2 + 50); // Position über der Windrose
   fill(255); // Farbe des Textes (Weiß)
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
@@ -99,7 +99,7 @@ function draw2DOverlay() {
 
   // Versionsnummer unten links anzeigen
   textSize(10); // Kleine Schriftgröße
-  text("Version 1.5", 10, height - 10); // Position unten links
+  text("Version 1.6", 10, height - 10); // Position unten links
 }
 
 function drawIsometricWindrose() {
@@ -118,8 +118,8 @@ function drawIsometricWindrose() {
     let angle = radians(adjustedAngle);
 
     // Positionen entlang der Ellipse
-    let xInner = (radius - 20) * cos(angle);
-    let yInner = (radius - 20) * sin(angle) * tilt;
+    let xInner = (radius - 10) * cos(angle);
+    let yInner = (radius - 10) * sin(angle) * tilt;
     let xOuter = radius * cos(angle);
     let yOuter = radius * sin(angle) * tilt;
 
