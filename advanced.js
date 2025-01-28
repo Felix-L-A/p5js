@@ -140,16 +140,17 @@ function drawIsometricWindrose() {
   
 
   // Rote Nadel (als Dreieck)
-  fill(255, 0, 0);
-  noStroke();
-  let needleHeight = 40;
-  let needleWidth = 20;
-  let x1 = 0;
-  let y1 = -(radius * tilt) + needleHeight;
-  let x2 = -needleWidth / 2;
-  let y2 = -(radius * tilt);
-  let x3 = needleWidth / 2;
-  let y3 = -(radius * tilt);
+fill(255, 0, 0); // Rote Füllfarbe (R, G, B)
+noStroke();
+let needleHeight = 40; // Höhe des Dreiecks
+let needleWidth = 20; // Breite des Dreiecks
+// Dreieckspunkte (nach oben zeigend)
+let x1 = 0; // Spitze des Dreiecks
+let y1 = -(radius * tilt+35) + needleHeight; // Spitze leicht oberhalb des Windrosenradius
+let x2 = -needleWidth / 2; // Linker Eckpunkt
+let y2 = (radius * tilt-100); // Basislinie unten
+let x3 = needleWidth / 2; // Rechter Eckpunkt
+let y3 = (radius * tilt-100); // Basislinie unten
   triangle(x1, y1, x2, y2, x3, y3);
 }
 
