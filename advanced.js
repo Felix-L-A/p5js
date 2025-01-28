@@ -1,7 +1,7 @@
 let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
-let heading = 0; // Kursrichtung in Grad (0 bis 360)
+let heading = 0; // Bewegungsrichtung basierend auf GPS
 let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
@@ -9,15 +9,6 @@ function setup() {
   createCanvas(600, 400); // 2D-Canvas
   textFont('sans-serif');
   textSize(16);
-
-  // Prüfe, ob iOS eine Berechtigung erfordert
-  if (typeof(DeviceOrientationEvent) !== 'undefined' && typeof(DeviceOrientationEvent.requestPermission) === 'function') {
-    createPermissionButton(); // Button für iOS
-  } else {
-    // Android/Chrome oder andere Browser (keine Berechtigung erforderlich)
-    permissionGranted = true;
-    setupOrientationListener(); // Bewegungssensor aktivieren
-  }
 
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
@@ -27,6 +18,9 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
+        if (position.coords.heading !== null) {
+          heading = position.coords.heading; // Bewegungsrichtung in Grad
+        }
         statusText = "GPS-Daten empfangen!";
       },
       (error) => {
@@ -47,12 +41,12 @@ function setup() {
 function draw() {
   background(30);
 
-  // Wenn keine Berechtigung für Sensoren erteilt wurde
+  // Wenn GPS-Daten fehlen
   if (!permissionGranted) {
     fill(255);
     textAlign(CENTER, CENTER);
     textSize(20);
-    text("Bitte Sensorzugriff erlauben", width / 2, height / 2);
+    text("Bitte GPS-Daten erlauben", width / 2, height / 2);
     return;
   }
 
@@ -91,7 +85,7 @@ function draw2DOverlay() {
 
   // Versionsnummer unten links anzeigen
   textSize(10); // Kleine Schriftgröße
-  text("Version 1.3", 10, height - 10); // Position unten links
+  text("Version 1.4", 10, height - 10); // Position unten links
 }
 
 function drawIsometricWindrose() {
@@ -156,29 +150,7 @@ function drawIsometricWindrose() {
   triangle(x1, y1, x2, y2, x3, y3);
 }
 
-function createPermissionButton() {
-  let button = createButton("Sensorzugriff anfordern");
-  button.style("font-size", "24px");
-  button.center();
-  button.mousePressed(() => {
-    DeviceOrientationEvent.requestPermission()
-      .then((response) => {
-        if (response === 'granted') {
-          permissionGranted = true;
-          setupOrientationListener(); // Eventlistener hinzufügen
-          button.remove(); // Button entfernen
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Sensorzugriff verweigert.");
-      });
-  });
-}
-
 function setupOrientationListener() {
   // Eventlistener für Bewegungssensor
-  window.addEventListener("deviceorientation", (event) => {
-    heading = event.alpha || 0; // Kursrichtung
-  });
+  // Nicht notwendig, da GPS verwendet wird
 }
