@@ -86,9 +86,9 @@ function drawCourseText() {
   textAlign(CENTER, CENTER);
   textSize(24); // Schriftgröße
   textStyle(BOLD);
-  text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, 0);
+  text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, -90);
   translate(0,110); 
-  text(`heading: ${headingGyro.toFixed(0)}°`, 0, 0); // Zentrierter Text
+  text(`heading: ${headingGyro.toFixed(0)}°`, 0, -60); // Zentrierter Text
   pop();
 }
 
@@ -105,7 +105,7 @@ function draw2DOverlay() {
 
 function drawIsometricWindrose() {
   push();
-  translate(width / 2, height / 2 + 50); // Mittelpunkt der Windrose
+  translate(width / 2, height / 2 ); // Mittelpunkt der Windrose
   let tilt = 0.5; // Neigungsfaktor für 3D-Effekt
   let radius = 200;
 
