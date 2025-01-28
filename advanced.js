@@ -88,9 +88,9 @@ function drawCourseText() {
   textAlign(CENTER, CENTER);
   textSize(24); // Schriftgröße
   textStyle(BOLD);
-  text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, -90);
+  text(`COG: ${headingGPS.toFixed(0)}°         SOG: ${(speed * 3.6).toFixed(1)} km/h`, 0, -90);
   translate(0,110); 
-  text(`heading: ${headingGyro.toFixed(0)}°`, 0, -60); // Zentrierter Text
+  text(`heading: ${headingGyro.toFixed(0)}°`, 0, -50); // Zentrierter Text
   pop();
 }
 
@@ -103,7 +103,7 @@ function draw2DOverlay() {
   textStyle(BOLD);
   text(`lon: ${latitude.toFixed(5)}`, 20, 50);
   text(`lat: ${longitude.toFixed(5)}`, 20, 80);
-  text(`altitude: ${altitudeGPS} m`, 20, 110);
+  text(`altitude: ${altitudeGPS.toFixed(0)} m`, 20, 110);
 }
 
 function drawIsometricWindrose() {
