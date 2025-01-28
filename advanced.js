@@ -1,7 +1,7 @@
 let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
-let rotationAngle = 0; // Winkel basierend auf rotationX
+let heading = 0; // Kursrichtung in Grad (0 bis 360)
 let statusText = "Starte...";
 let permissionGranted = false; // Zugriff auf Sensoren
 
@@ -72,7 +72,7 @@ function drawCourseText() {
   fill(255); // Farbe des Textes (Weiß)
   textAlign(CENTER, CENTER);
   textSize(20); // Schriftgröße
-  text(`Kurs: ${rotationAngle.toFixed(0)}°`, 0, 0); // Zentrierter Text
+  text(`Kurs: ${heading.toFixed(0)}°`, 0, 0); // Zentrierter Text
   pop();
 }
 
@@ -95,13 +95,14 @@ function drawIsometricWindrose() {
   let tilt = 0.5; // Neigungsfaktor für 3D-Effekt
   let radius = 150;
 
-  // Windrose rotieren basierend auf dem Kurs
-  rotate(radians(rotationAngle));
-
-  // Außenkreis der Windrose (als Ellipse für Neigung)
+  // Statische Windrose (Ellipse bleibt fest)
   stroke(255);
   noFill();
   ellipse(0, 0, radius * 2, radius * 2 * tilt);
+
+  // Rotierende Gradmarkierungen und Zahlen basierend auf dem Kurs
+  push();
+  rotate(radians(heading)); // Drehung basierend auf dem aktuellen Kurs
 
   // Gradmarkierungen
   for (let i = 0; i < 360; i += 20) {
@@ -115,6 +116,16 @@ function drawIsometricWindrose() {
       let y2Outer = radius * sin(angle) * tilt;
       stroke(255);
       line(x1Inner, y1Inner, x2Outer, y2Outer);
+
+      // Gradzahlen an großen Markierungen
+      fill(255);
+      noStroke();
+      textSize(14);
+      let distance = radius - 30; // Position der Gradzahlen
+      let xText = distance * cos(angle);
+      let yText = distance * sin(angle) * tilt;
+      textAlign(CENTER, CENTER);
+      text(i, xText, yText);
     } else {
       // Alle 20°: Nur innenliegend
       let x1Inner = (radius - 20) * cos(angle);
@@ -125,6 +136,8 @@ function drawIsometricWindrose() {
       line(x1Inner, y1Inner, x2Inner, y2Inner);
     }
   }
+  pop();
+  
 
   // Rote Nadel (als Dreieck)
   fill(255, 0, 0);
@@ -163,6 +176,6 @@ function createPermissionButton() {
 function setupOrientationListener() {
   // Eventlistener für Bewegungssensor
   window.addEventListener("deviceorientation", (event) => {
-    rotationAngle = event.beta || 0; // Kursrichtung
+    heading = event.alpha || 0; // Kursrichtung
   });
 }
