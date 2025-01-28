@@ -117,8 +117,8 @@ function drawIsometricWindrose() {
     // Rote Nadel (als Dreieck)
   fill(255, 0, 0); // Rote Füllfarbe
   noStroke();
-  let needleHeight = 40; // Höhe des Dreiecks
-  let needleWidth = 20; // Breite des Dreiecks
+  let needleHeight = 60; // Höhe des Dreiecks
+  let needleWidth = 24; // Breite des Dreiecks
   triangle(0, -(radius * tilt), -needleWidth / 2, -(radius * tilt) + needleHeight, 
            needleWidth / 2, -(radius * tilt) + needleHeight);
 
