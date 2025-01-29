@@ -59,7 +59,7 @@ function draw() {
     textSize(20);
     text("Please allow sensor permission", width / 2, height / 2-50);
     textSize(12);
-    text("version 1.41", width / 2, height / 2+50);
+    text("version 1.42", width / 2, height / 2+50);
     return;
   }
 
@@ -175,67 +175,65 @@ function drawHeadingScale() {
 
 function drawHeadingScale() {
   push();
-  translate(width / 2, height / 2 + 50); // Zentrum der Skala
-
-  let scaleRadius = width * 0.35; // Größe der Skala
+  translate(width / 2, height / 2 + 50); // Position der Skala
+  
+  let scaleWidth = width * 0.8; // Skala über 80% der Bildschirmbreite
+  let scaleHeight = 40; // Höhe der Skala
   let fieldOfView = 60; // ±60° um den aktuellen Kurs
 
-  // **Korrektur: Die Skala selbst dreht sich mit headingGyro**
-  let correctedHeading = headingGyro; 
+  // **Offset sorgt für flüssige Bewegung**
+  let correctedHeading = headingGyro;
+  let offsetX = map(correctedHeading % 20, 0, 20, 0, scaleWidth / (fieldOfView / 10));
 
-  // **Drehe die gesamte Skala basierend auf headingGyro**
-  rotate(radians(-correctedHeading));
+  // Hintergrund der Skala
+  fill(240);
+  rect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40);
 
-  // **Zeichne NUR den sichtbaren Bereich von ±60°**
-  for (let i = correctedHeading - fieldOfView; i <= correctedHeading + fieldOfView; i += 20) {
+  // **Zeichne die horizontale Skala mit Markierungen alle 20°**
+  for (let i = Math.floor(correctedHeading / 20) * 20 - fieldOfView; 
+       i <= Math.ceil(correctedHeading / 20) * 20 + fieldOfView; 
+       i += 20) { 
+
     let adjustedAngle = (i + 360) % 360; // Winkel auf 0-360° begrenzen
-    let angle = radians(i - correctedHeading); // Relativer Winkel zur Mitte
-
-    let xPos = scaleRadius * cos(angle);
-    let yPos = scaleRadius * sin(angle);
+    let xPos = map(i - correctedHeading, -fieldOfView, fieldOfView, -scaleWidth / 2, scaleWidth / 2) + offsetX;
 
     let fontSize = map(abs(i - correctedHeading), 0, fieldOfView, 30, 12); // Schriftgröße abhängig von Entfernung
     let lineThickness = map(abs(i - correctedHeading), 0, fieldOfView, 4, 1); // Tick-Dicke abhängig von Entfernung
 
-    // **Tick-Marken entlang der kreisförmigen Skala**
+    // **Tick-Marken bewegen sich mit!**
     stroke(0);
     strokeWeight(lineThickness);
-    line(xPos * 0.9, yPos * 0.9, xPos, yPos); // Tick-Markierung von innen nach außen
+    line(xPos, -scaleHeight / 4 + 35, xPos, scaleHeight / 4 + 30);
+    line(xPos, -scaleHeight / 4 - 15, xPos, scaleHeight / 4 - 50);
 
-    // **Zahlen auf der rotierenden Skala**
+    // **Zahlen bleiben fix alle 20°, aber bewegen sich horizontal**
     fill(0);
     noStroke();
     textSize(fontSize);
     textAlign(CENTER, CENTER);
-    text(adjustedAngle.toFixed(0), xPos * 1.1, yPos * 1.1); // Zahlen leicht außerhalb der Tick-Marken platzieren
+    text(adjustedAngle.toFixed(0), xPos, scaleHeight / 2 - 20);
   }
 
   pop();
 
-  // **Rote Kurs-Nadel bleibt statisch oben**
+  // **Rote Kurs-Nadeln bleiben statisch über der Skala**
   fill(255, 0, 0);
   noStroke();
-  let needleHeight = 40;
-  let needleWidth = 20;
+  let needleHeight = 20;
+  let needleWidth = 40;
 
-  // **Feste Nadel zeigt immer nach oben**
-  triangle(width / 2, height / 2 - scaleRadius - 20, 
-           width / 2 - needleWidth / 2, height / 2 - scaleRadius + needleHeight,
-           width / 2 + needleWidth / 2, height / 2 - scaleRadius + needleHeight);
+  // **Obere Nadel (zeigt nach unten)**
+  triangle(width / 2, height / 2 + 20, 
+           width / 2 - needleWidth / 2, height / 2 - needleHeight,
+           width / 2 + needleWidth / 2, height / 2 - needleHeight);
+
+  // **Untere Nadel (zeigt nach oben)**
+  triangle(width / 2, height / 2 + 80, 
+           width / 2 - needleWidth / 2, height / 2 + 100,
+           width / 2 + needleWidth / 2, height / 2 + 100);
 }
 
 
-  // **Rote Kurs-Nadel bleibt statisch oben**
-  fill(255, 0, 0);
-  noStroke();
-  let needleHeight = 40;
-  let needleWidth = 20;
-
-  // **Feste Nadel zeigt immer nach oben**
-  triangle(width / 2, height / 2 - scaleRadius - 20, 
-           width / 2 - needleWidth / 2, height / 2 - scaleRadius + needleHeight,
-           width / 2 + needleWidth / 2, height / 2 - scaleRadius + needleHeight);
-}
 
 function drawInclinationIndicator() {
   push();
@@ -273,4 +271,3 @@ function setupOrientationListener() {
     rotationY = event.beta || 0;
   });
 }
-
