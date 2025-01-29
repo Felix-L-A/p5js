@@ -105,7 +105,7 @@ function draw2DOverlay() {
   text(statusText, 20, 20);
   text(`lon: ${latitude.toFixed(5)}`, 20, 50);
   text(`lat: ${longitude.toFixed(5)}`, 20, 80);
-  text(`altitude: ${altitudeGPS.toFixed(0)} m`, 20, 110);
+  text(`altitude: ${(altitudeGPS || 0).toFixed(0)} m`, 20, 110);
 }
 
 
