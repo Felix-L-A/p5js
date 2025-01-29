@@ -91,7 +91,7 @@ function drawCourseText() {
   
   text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, -90);
   translate(0,100); 
-  text(`heading: ${correctedHeading.toFixed(0)}°`, 0, -100); // Zentrierter Text
+  text(`heading: ${headingGyro.toFixed(0)}°`, 0, -100); // Zentrierter Text
   pop();
 }
 
