@@ -86,7 +86,7 @@ function drawCourseText() {
   translate(width / 2, height / 2 - 80); // Position über der Skala
   fill(0); // Farbe des Textes (Schwarz)
   textAlign(CENTER, TOP);
-  textSize(36); // Schriftgröße
+  textSize(40); // Schriftgröße
   textStyle(BOLD);
   text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(1)} km/h`, 0, -90);
   translate(0,100); 
