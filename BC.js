@@ -181,17 +181,17 @@ function drawHeadingScale() {
   let scaleHeight = 40; // Höhe der Skala
   let fieldOfView = 50; // ±50° um den aktuellen Kurs
 
-  // **Korrektur: Heading bleibt konstant, aber Skala bewegt sich sanft**
+  // **Fix: Die Skala bewegt sich wirklich mit headingGyro!**
   let correctedHeading = headingGyro; 
 
   // Hintergrund der Skala
   fill(240);
   rect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40);
 
-  // **Berechne den Offset für die Bewegung der Skala**
+  // **Offset sorgt für flüssige Bewegung der Skala**
   let offsetX = map(correctedHeading % 20, 0, 20, 0, scaleWidth / (fieldOfView / 10));
 
-  // **Zeichne die Skala mit festen 20°-Schritten**
+  // **Zeichne die Skala mit beweglichen 20°-Schritten**
   for (let i = Math.floor(correctedHeading / 20) * 20 - fieldOfView; 
        i <= Math.ceil(correctedHeading / 20) * 20 + fieldOfView; 
        i += 20) { 
@@ -202,13 +202,13 @@ function drawHeadingScale() {
     let fontSize = map(abs(i - correctedHeading), 0, fieldOfView, 30, 12); // Schriftgröße abhängig von Entfernung
     let lineThickness = map(abs(i - correctedHeading), 0, fieldOfView, 4, 1); // Tick-Dicke abhängig von Entfernung
 
-    // **Tick-Marken zeichnen (alle 20°)**
+    // **Tick-Marken bewegen sich mit!**
     stroke(0);
     strokeWeight(lineThickness);
     line(xPos, -scaleHeight / 4 + 35, xPos, scaleHeight / 4 + 30);
     line(xPos, -scaleHeight / 4 - 15, xPos, scaleHeight / 4 - 50);
 
-    // **Feste 20°-Zahlen anzeigen**
+    // **Zahlen bewegen sich mit, bleiben aber alle 20° fix**
     fill(0);
     noStroke();
     textSize(fontSize);
@@ -232,6 +232,7 @@ function drawHeadingScale() {
 
   pop();
 }
+
 
 
 function drawInclinationIndicator() {
