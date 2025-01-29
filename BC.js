@@ -76,7 +76,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 1.2", 20, height - 20); // Position unten links
+  text("version 1.3", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -105,7 +105,7 @@ function draw2DOverlay() {
   text(`lat: ${longitude.toFixed(5)}`, 20, 80);
 }
 
-
+/*
 function drawHeadingScale() {
   push();
   translate(width / 2, height / 2 + 50); // Mitte des Displays für die Skala
@@ -169,6 +169,71 @@ function drawHeadingScale() {
 
    pop();
 }
+*/
+
+function drawHeadingScale() {
+  push();
+  translate(width / 2, height / 2 + 50); // Mitte der Skala
+
+  let scaleWidth = width * 0.8; // Skala über 80% der Bildschirmbreite
+  let scaleHeight = 40; // Höhe der Skala
+  let fieldOfView = 50; // ±50° um den aktuellen Kurs
+
+  // **Fix: Die Skala bewegt sich wirklich mit dem Gyroskop**
+  let correctedHeading = headingGyro; 
+
+  // Hintergrund der Skala
+  fill(240);
+  rect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40);
+
+  // Start- und Endwinkel für die Skala
+  let startAngle = correctedHeading - fieldOfView;
+  let endAngle = correctedHeading + fieldOfView;
+
+  // **Berechne den Offset für die Skala-Bewegung**
+  let offsetX = map(correctedHeading % 20, 0, 20, 0, scaleWidth / (fieldOfView / 10));
+
+  // **Zeichne die Skala als bewegliches Band**
+  for (let i = startAngle - 20; i <= endAngle + 20; i += 20) { // Mehr Werte, um flüssige Bewegung zu simulieren
+    let adjustedAngle = (i + 360) % 360; // Winkel zwischen 0-360°
+    
+    // **Die Position der Zahlen & Markierungen hängt direkt von headingGyro ab**
+    let xPos = map(i - correctedHeading, -fieldOfView, fieldOfView, -scaleWidth / 2, scaleWidth / 2) + offsetX;
+
+    let fontSize = map(abs(i - correctedHeading), 0, fieldOfView, 30, 12); // Schriftgröße abhängig von Entfernung
+    let lineThickness = map(abs(i - correctedHeading), 0, fieldOfView, 4, 1); // Tick-Dicke abhängig von Entfernung
+
+    // **Tick-Marken zeichnen (alle 20°)**
+    stroke(0);
+    strokeWeight(lineThickness);
+    line(xPos, -scaleHeight / 4 + 35, xPos, scaleHeight / 4 + 30);
+    line(xPos, -scaleHeight / 4 - 15, xPos, scaleHeight / 4 - 50);
+
+    // **Zahl anzeigen (alle 20°)**
+    fill(0);
+    noStroke();
+    textSize(fontSize);
+    textAlign(CENTER, CENTER);
+    text(adjustedAngle.toFixed(0), xPos, scaleHeight / 2 - 20);
+  }
+
+  // **Fixe rote Nadeln oben & unten**
+  fill(255, 0, 0);
+  noStroke();
+  let needleHeight = 20;
+  let needleWidth = 40;
+
+  // **Untere Nadel (zeigt nach unten)**
+  triangle(0, scaleHeight / 2 + 10, -needleWidth / 2, scaleHeight / 2 + 40, 
+           needleWidth / 2, scaleHeight / 2 + 40);
+
+  // **Obere Nadel (gespiegelt nach oben)**
+  triangle(0, -scaleHeight / 2 - 10, -needleWidth / 2, -scaleHeight / 2 - 40, 
+           needleWidth / 2, -scaleHeight / 2 - 40);
+
+  pop();
+}
+
 
 function drawInclinationIndicator() {
   push();
