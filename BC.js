@@ -59,7 +59,7 @@ function draw() {
     textSize(20);
     text("Please allow sensor permission", width / 2, height / 2-50);
     textSize(12);
-    text("version 1.4", width / 2, height / 2+50);
+    text("version 1.41", width / 2, height / 2+50);
     return;
   }
 
@@ -175,11 +175,10 @@ function drawHeadingScale() {
 
 function drawHeadingScale() {
   push();
-  translate(width / 2, height / 2 + 50); // Zentrum der Kompassscheibe
+  translate(width / 2, height / 2 + 50); // Zentrum der Skala
 
-  let scaleRadius = width * 0.35; // Die Größe der Skala
-  let scaleHeight = 40; // Höhe der Skala
-  let fieldOfView = 50; // ±50° um den aktuellen Kurs
+  let scaleRadius = width * 0.35; // Größe der Skala
+  let fieldOfView = 60; // ±60° um den aktuellen Kurs
 
   // **Korrektur: Die Skala selbst dreht sich mit headingGyro**
   let correctedHeading = headingGyro; 
@@ -187,9 +186,11 @@ function drawHeadingScale() {
   // **Drehe die gesamte Skala basierend auf headingGyro**
   rotate(radians(-correctedHeading));
 
-  // **Zeichne die rotierende Skala**
-  for (let i = 0; i < 360; i += 20) {
-    let angle = radians(i);
+  // **Zeichne NUR den sichtbaren Bereich von ±60°**
+  for (let i = correctedHeading - fieldOfView; i <= correctedHeading + fieldOfView; i += 20) {
+    let adjustedAngle = (i + 360) % 360; // Winkel auf 0-360° begrenzen
+    let angle = radians(i - correctedHeading); // Relativer Winkel zur Mitte
+
     let xPos = scaleRadius * cos(angle);
     let yPos = scaleRadius * sin(angle);
 
@@ -206,10 +207,23 @@ function drawHeadingScale() {
     noStroke();
     textSize(fontSize);
     textAlign(CENTER, CENTER);
-    text(i.toFixed(0), xPos * 1.1, yPos * 1.1); // Zahlen leicht außerhalb der Tick-Marken platzieren
+    text(adjustedAngle.toFixed(0), xPos * 1.1, yPos * 1.1); // Zahlen leicht außerhalb der Tick-Marken platzieren
   }
 
   pop();
+
+  // **Rote Kurs-Nadel bleibt statisch oben**
+  fill(255, 0, 0);
+  noStroke();
+  let needleHeight = 40;
+  let needleWidth = 20;
+
+  // **Feste Nadel zeigt immer nach oben**
+  triangle(width / 2, height / 2 - scaleRadius - 20, 
+           width / 2 - needleWidth / 2, height / 2 - scaleRadius + needleHeight,
+           width / 2 + needleWidth / 2, height / 2 - scaleRadius + needleHeight);
+}
+
 
   // **Rote Kurs-Nadel bleibt statisch oben**
   fill(255, 0, 0);
