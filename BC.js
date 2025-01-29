@@ -58,6 +58,8 @@ function draw() {
     textAlign(CENTER, CENTER);
     textSize(20);
     text("Please allow sensor permission", width / 2, height / 2-50);
+    textSize(12);
+    text("version 1.3", width / 2, height / 2+50);
     return;
   }
 
