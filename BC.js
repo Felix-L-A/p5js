@@ -87,7 +87,7 @@ function drawCourseText() {
   textSize(30); // Schriftgröße
   
   // **Korrektur: headingGyro mit gleicher Referenz wie die Skala**
-  let correctedHeading = (headingGyro - 90 + 360) % 360; 
+  let correctedHeading = (headingGyro + 360) % 360; 
   
   text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, -90);
   translate(0,100); 
