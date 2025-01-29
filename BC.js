@@ -59,7 +59,7 @@ function draw() {
     textSize(20);
     text("Please allow sensor permission", width / 2, height / 2-50);
     textSize(12);
-    text("version 1.3", width / 2, height / 2+50);
+    text("version 1.4", width / 2, height / 2+50);
     return;
   }
 
@@ -78,7 +78,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 1.3", 20, height - 20); // Position unten links
+  text("version 1.4", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -175,65 +175,53 @@ function drawHeadingScale() {
 
 function drawHeadingScale() {
   push();
-  translate(width / 2, height / 2 + 50); // Mitte der Skala
+  translate(width / 2, height / 2 + 50); // Zentrum der Kompassscheibe
 
-  let scaleWidth = width * 0.8; // Skala über 80% der Bildschirmbreite
+  let scaleRadius = width * 0.35; // Die Größe der Skala
   let scaleHeight = 40; // Höhe der Skala
   let fieldOfView = 50; // ±50° um den aktuellen Kurs
 
-  // **Fix: Die Skala bewegt sich wirklich mit headingGyro!**
+  // **Korrektur: Die Skala selbst dreht sich mit headingGyro**
   let correctedHeading = headingGyro; 
 
-  // Hintergrund der Skala
-  fill(240);
-  rect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40);
+  // **Drehe die gesamte Skala basierend auf headingGyro**
+  rotate(radians(-correctedHeading));
 
-  // **Offset sorgt für flüssige Bewegung der Skala**
-  let offsetX = map(correctedHeading % 20, 0, 20, 0, scaleWidth / (fieldOfView / 10));
-
-  // **Zeichne die Skala mit beweglichen 20°-Schritten**
-  for (let i = Math.floor(correctedHeading / 20) * 20 - fieldOfView; 
-       i <= Math.ceil(correctedHeading / 20) * 20 + fieldOfView; 
-       i += 20) { 
-
-    let adjustedAngle = (i + 360) % 360; // Winkel auf 0-360° begrenzen
-    let xPos = map(i - correctedHeading, -fieldOfView, fieldOfView, -scaleWidth / 2, scaleWidth / 2) + offsetX;
+  // **Zeichne die rotierende Skala**
+  for (let i = 0; i < 360; i += 20) {
+    let angle = radians(i);
+    let xPos = scaleRadius * cos(angle);
+    let yPos = scaleRadius * sin(angle);
 
     let fontSize = map(abs(i - correctedHeading), 0, fieldOfView, 30, 12); // Schriftgröße abhängig von Entfernung
     let lineThickness = map(abs(i - correctedHeading), 0, fieldOfView, 4, 1); // Tick-Dicke abhängig von Entfernung
 
-    // **Tick-Marken bewegen sich mit!**
+    // **Tick-Marken entlang der kreisförmigen Skala**
     stroke(0);
     strokeWeight(lineThickness);
-    line(xPos, -scaleHeight / 4 + 35, xPos, scaleHeight / 4 + 30);
-    line(xPos, -scaleHeight / 4 - 15, xPos, scaleHeight / 4 - 50);
+    line(xPos * 0.9, yPos * 0.9, xPos, yPos); // Tick-Markierung von innen nach außen
 
-    // **Zahlen bewegen sich mit, bleiben aber alle 20° fix**
+    // **Zahlen auf der rotierenden Skala**
     fill(0);
     noStroke();
     textSize(fontSize);
     textAlign(CENTER, CENTER);
-    text(adjustedAngle.toFixed(0), xPos, scaleHeight / 2 - 20);
+    text(i.toFixed(0), xPos * 1.1, yPos * 1.1); // Zahlen leicht außerhalb der Tick-Marken platzieren
   }
 
-  // **Fixe rote Nadeln oben & unten**
+  pop();
+
+  // **Rote Kurs-Nadel bleibt statisch oben**
   fill(255, 0, 0);
   noStroke();
-  let needleHeight = 20;
-  let needleWidth = 40;
+  let needleHeight = 40;
+  let needleWidth = 20;
 
-  // **Untere Nadel (zeigt nach unten)**
-  triangle(0, scaleHeight / 2 + 10, -needleWidth / 2, scaleHeight / 2 + 40, 
-           needleWidth / 2, scaleHeight / 2 + 40);
-
-  // **Obere Nadel (gespiegelt nach oben)**
-  triangle(0, -scaleHeight / 2 - 10, -needleWidth / 2, -scaleHeight / 2 - 40, 
-           needleWidth / 2, -scaleHeight / 2 - 40);
-
-  pop();
+  // **Feste Nadel zeigt immer nach oben**
+  triangle(width / 2, height / 2 - scaleRadius - 20, 
+           width / 2 - needleWidth / 2, height / 2 - scaleRadius + needleHeight,
+           width / 2 + needleWidth / 2, height / 2 - scaleRadius + needleHeight);
 }
-
-
 
 function drawInclinationIndicator() {
   push();
