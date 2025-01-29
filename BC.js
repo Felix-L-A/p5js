@@ -11,8 +11,7 @@ let permissionGranted = false; // Zugriff auf Sensoren
 function setup() {
   createCanvas(windowWidth, 400); // 2D-Canvas
   textFont('sans-serif');
-  textSize(24);
-
+  
   // Prüfen, ob Geolocation verfügbar ist
   if ("geolocation" in navigator) {
     statusText = "Waiting for GPS ...";
@@ -138,8 +137,7 @@ function drawHeadingScale() {
   }
 }
 
-  
-  // **3-Farben-Verlauf für die Skala**
+    // **3-Farben-Verlauf für die Skala**
   let c1 = color(55);  // Rot (links)
   let c2 = color(255); // Gelb (Mitte)
   let c3 = color(55);  // Blau (rechts)
