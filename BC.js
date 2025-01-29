@@ -125,7 +125,7 @@ function drawHeadingScale() {
 
   // Skala zeichnen
   for (let i = startAngle; i <= endAngle; i += 10) {
-    let adjustedAngle = (i - 90 + 360) % 360; // Sicherstellen, dass der Winkel 0-360° bleibt
+    let adjustedAngle = (i + 360) % 360; // Sicherstellen, dass der Winkel 0-360° bleibt
     let xPos = map(i, startAngle, endAngle, -scaleWidth / 2, scaleWidth / 2); // Position der Markierung
     
     let fontSize = map(abs(i - headingGyro), 0, fieldOfView, 40, 12); // Schriftgröße abhängig vom Abstand
@@ -202,7 +202,7 @@ function createPermissionButton() {
 
 function setupOrientationListener() {
   window.addEventListener("deviceorientation", (event) => {
-    headingGyro = event.alpha || 0;
+    headingGyro = (360 - event.alpha) % 360;
     rotationY = event.beta || 0;
   });
 }
