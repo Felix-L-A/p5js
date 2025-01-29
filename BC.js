@@ -76,7 +76,7 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 1.1", 20, height - 20); // Position unten links
+  text("version 1.2", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -121,12 +121,11 @@ function drawHeadingScale() {
 
   // Skala zeichnen
   for (let i = startAngle; i <= endAngle; i += 10) {
-    let adjustedAngle = (i + 360) % 360; // Sicherstellen, dass der Winkel 0-360° bleibt
+    let adjustedAngle = (i + 90 + 360) % 360; // Sicherstellen, dass der Winkel 0-360° bleibt
     let xPos = map(i, startAngle, endAngle, -scaleWidth / 2, scaleWidth / 2); // Position der Markierung
     
     let fontSize = map(abs(i - headingGyro), 0, fieldOfView, 40, 12); // Schriftgröße abhängig vom Abstand
-    
-        let lineThickness = map(abs(i - headingGyro), 0, fieldOfView, 5, 1); // Linienbreite abhängig von Abstand
+    let lineThickness = map(abs(i - headingGyro), 0, fieldOfView, 5, 1); // Linienbreite abhängig von Abstand
 
 
     // Tick-Marke zeichnen
@@ -140,14 +139,13 @@ function drawHeadingScale() {
     line(xPos, -scaleHeight / 4 -15, xPos, scaleHeight / 4 -50); // Tick-Marke
 
    
-    // **Nur alle 20° eine Zahl anzeigen**
-    if (i % 20 === 0) {
+    // Zahl anzeigen**
       fill(0);
       noStroke();
       textSize(fontSize);
       textAlign(CENTER, CENTER);
-      text(adjustedAngle.toFixed(0), xPos, scaleHeight / 2 + 20); // Zahlen unterhalb der Skala
-    }  
+      text(adjustedAngle.toFixed(0), xPos, scaleHeight / 2 - 20); // Zahlen unterhalb der Skala
+      
   }
 
  // **Rote Kurs-Nadel bleibt statisch in der Mitte**
