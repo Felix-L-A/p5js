@@ -70,13 +70,13 @@ function draw() {
   // 2D-Overlay für GPS und Geschwindigkeit
   draw2DOverlay();
 
-  // Isometrische Windrose
+  // Kurs-Skala
   drawHeadingScale();
 
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 1.0", 20, height - 20); // Position unten links
+  text("version 1.1", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
@@ -139,12 +139,15 @@ function drawHeadingScale() {
     stroke(0);
     line(xPos, -scaleHeight / 4 -15, xPos, scaleHeight / 4 -50); // Tick-Marke
 
-    fill(0);
-    noStroke();
-    textSize(fontSize);
-    textAlign(CENTER, CENTER);
-    text(adjustedAngle, xPos, scaleHeight / 2 -20); // Zahlen leicht unterhalb der Skala
-    
+   
+    // **Nur alle 20° eine Zahl anzeigen**
+    if (i % 20 === 0) {
+      fill(0);
+      noStroke();
+      textSize(fontSize);
+      textAlign(CENTER, CENTER);
+      text(adjustedAngle.toFixed(0), xPos, scaleHeight / 2 + 20); // Zahlen unterhalb der Skala
+    }  
   }
 
  // **Rote Kurs-Nadel bleibt statisch in der Mitte**
