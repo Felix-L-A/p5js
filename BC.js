@@ -1,6 +1,7 @@
 let latitude = 0;
 let longitude = 0;
 let speed = 0; // Geschwindigkeit in m/s
+let altitudeGPS = 0; //GPS Höhe
 let headingGPS = 0; // Bewegungsrichtung basierend auf GPS
 let headingGyro = 0; // Bewegungsrichtung basierend auf Gyroskop
 let rotationY = 0; // Neigung (Y-Achse)
@@ -59,7 +60,7 @@ function draw() {
     textSize(20);
     text("Please allow sensor permission", width / 2, height / 2-50);
     textSize(12);
-    text("version 1.43", width / 2, height / 2+50);
+    text("version 1.5", width / 2, height / 2+50);
     return;
   }
 
@@ -78,21 +79,19 @@ function draw() {
   // Versionsnummer anzeigen
   fill(0);
   textSize(10);
-  text("version 1.4", 20, height - 20); // Position unten links
+  text("version 1.5", 20, height - 20); // Position unten links
 }
 
 function drawCourseText() {
   push();
-  translate(width / 2, height / 2 - 60); // Position über der Windrose
+  translate(width / 2, height / 2 - 80); // Position über der Skala
   fill(0); // Farbe des Textes (Schwarz)
   textAlign(CENTER, TOP);
-  textSize(30); // Schriftgröße
-  
-  // **Korrektur: headingGyro mit gleicher Referenz wie die Skala**
-  let correctedHeading = (headingGyro + 360) % 360; 
-  
-  text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(2)} km/h`, 0, -90);
+  textSize(36); // Schriftgröße
+  textStyle(BOLD);
+  text(`COG: ${headingGPS.toFixed(0)}°           SOG: ${(speed * 3.6).toFixed(1)} km/h`, 0, -90);
   translate(0,100); 
+  textStyle(BOLD);
   text(`heading: ${headingGyro.toFixed(0)}°`, 0, -100); // Zentrierter Text
   pop();
 }
@@ -100,30 +99,58 @@ function drawCourseText() {
 function draw2DOverlay() {
   fill(0);
   textAlign(LEFT, CENTER);
-
+  textSize(20);
+  textStyle(BOLD);
   // Statusinformationen anzeigen
   text(statusText, 20, 20);
   text(`lon: ${latitude.toFixed(5)}`, 20, 50);
   text(`lat: ${longitude.toFixed(5)}`, 20, 80);
+  text(`altitude: ${altitudeGPS.toFixed(0)} m`, 20, 110);
 }
+
+
 
 function drawHeadingScale() {
   push();
   translate(width / 2, height / 2 + 50); // Mitte der Skala
-
+  
   let scaleWidth = width * 0.8; // Skala über 80% der Bildschirmbreite
   let scaleHeight = 40; // Höhe der Skala
   let fieldOfView = 60; // ±60° um den aktuellen Kurs
+  
+  function drawGradientRect(x, y, w, h, color1, color2, color3) {
+  noFill();
+  
+  for (let i = 0; i < w; i++) {
+    let inter = map(i, 0, w, 0, 1); // Interpolationsfaktor (0 bis 1)
+    
+    let col;
+    if (inter < 0.5) {
+      // Erste Hälfte: Verlauf zwischen color1 & color2
+      col = lerpColor(color1, color2, inter * 2);
+    } else {
+      // Zweite Hälfte: Verlauf zwischen color2 & color3
+      col = lerpColor(color2, color3, (inter - 0.5) * 2);
+    }
+    
+    stroke(col);
+    line(x + i, y, x + i, y + h);
+  }
+}
+
+  
+  // **3-Farben-Verlauf für die Skala**
+  let c1 = color(55);  // Rot (links)
+  let c2 = color(255); // Gelb (Mitte)
+  let c3 = color(55);  // Blau (rechts)
+  drawGradientRect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40, c1, c2, c3);
+
 
   // **Offset sorgt für sanfte Bewegung der Skala**
   let correctedHeading = headingGyro;
   let offsetX = map(correctedHeading % 20, 0, 20, 0, scaleWidth / (fieldOfView / 10));
 
-  // **Bewegliche Skala als Hintergrund**
-  fill(240);
-  rect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40);
-
-  // **Jetzt bewegt sich die Skala wirklich mit headingGyro!**
+  // **Jetzt bewegt sich die Skala mit headingGyro!**
   for (let i = Math.floor(correctedHeading / 20) * 20 - fieldOfView; 
        i <= Math.ceil(correctedHeading / 20) * 20 + fieldOfView; 
        i += 20) { 
@@ -159,29 +186,31 @@ function drawHeadingScale() {
   let needleWidth = 40;
 
   // **Obere Nadel (zeigt nach unten)**
-  triangle(width / 2, height / 2 + 20, 
+  triangle(width / 2, height / 2 + 15, 
            width / 2 - needleWidth / 2, height / 2 - needleHeight,
            width / 2 + needleWidth / 2, height / 2 - needleHeight);
 
   // **Untere Nadel (zeigt nach oben)**
-  triangle(width / 2, height / 2 + 80, 
-           width / 2 - needleWidth / 2, height / 2 + 100,
-           width / 2 + needleWidth / 2, height / 2 + 100);
+  triangle(width / 2, height / 2 + 85, 
+           width / 2 - needleWidth / 2, height / 2 + 115,
+           width / 2 + needleWidth / 2, height / 2 + 115);
 }
+
 
 
 function drawInclinationIndicator() {
   push();
-  translate(width / 2 -10, height - 40); // Position unter der Windrose
+  translate(width / 2, height - 60); // Position unter der Windrose
   let indicatorWidth = 300;
   let positionX = map(rotationY, -30, 30, -indicatorWidth / 2, indicatorWidth / 2);
   stroke(0);
   line(-indicatorWidth / 2, 0, indicatorWidth / 2, 0);
   fill(map(abs(rotationY), 0, 30, 0, 255), 255 - map(abs(rotationY), 0, 30, 0, 255), 0);
-  ellipse(positionX, 0, 20, 20);
+  ellipse(positionX, 0, 30, 30);
   fill(0);
-  textSize(20);
-  text(`heel: ${rotationY.toFixed(1)}°`, -30, 30);
+  textSize(26);
+  textStyle(NORMAL);
+  text(`heeling: ${rotationY.toFixed(0)}°`, -70, 30);
   pop();
 }
 
