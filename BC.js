@@ -181,25 +181,22 @@ function drawHeadingScale() {
   let scaleHeight = 40; // Höhe der Skala
   let fieldOfView = 50; // ±50° um den aktuellen Kurs
 
-  // **Fix: Die Skala bewegt sich wirklich mit dem Gyroskop**
+  // **Korrektur: Heading bleibt konstant, aber Skala bewegt sich sanft**
   let correctedHeading = headingGyro; 
 
   // Hintergrund der Skala
   fill(240);
   rect(-scaleWidth / 2, -40, scaleWidth, scaleHeight + 40);
 
-  // Start- und Endwinkel für die Skala
-  let startAngle = correctedHeading - fieldOfView;
-  let endAngle = correctedHeading + fieldOfView;
-
-  // **Berechne den Offset für die Skala-Bewegung**
+  // **Berechne den Offset für die Bewegung der Skala**
   let offsetX = map(correctedHeading % 20, 0, 20, 0, scaleWidth / (fieldOfView / 10));
 
-  // **Zeichne die Skala als bewegliches Band**
-  for (let i = startAngle - 20; i <= endAngle + 20; i += 20) { // Mehr Werte, um flüssige Bewegung zu simulieren
-    let adjustedAngle = (i + 360) % 360; // Winkel zwischen 0-360°
-    
-    // **Die Position der Zahlen & Markierungen hängt direkt von headingGyro ab**
+  // **Zeichne die Skala mit festen 20°-Schritten**
+  for (let i = Math.floor(correctedHeading / 20) * 20 - fieldOfView; 
+       i <= Math.ceil(correctedHeading / 20) * 20 + fieldOfView; 
+       i += 20) { 
+
+    let adjustedAngle = (i + 360) % 360; // Winkel auf 0-360° begrenzen
     let xPos = map(i - correctedHeading, -fieldOfView, fieldOfView, -scaleWidth / 2, scaleWidth / 2) + offsetX;
 
     let fontSize = map(abs(i - correctedHeading), 0, fieldOfView, 30, 12); // Schriftgröße abhängig von Entfernung
@@ -211,7 +208,7 @@ function drawHeadingScale() {
     line(xPos, -scaleHeight / 4 + 35, xPos, scaleHeight / 4 + 30);
     line(xPos, -scaleHeight / 4 - 15, xPos, scaleHeight / 4 - 50);
 
-    // **Zahl anzeigen (alle 20°)**
+    // **Feste 20°-Zahlen anzeigen**
     fill(0);
     noStroke();
     textSize(fontSize);
