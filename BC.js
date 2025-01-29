@@ -20,6 +20,7 @@ function setup() {
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         speed = position.coords.speed || 0; // Geschwindigkeit in m/s
+        altitudeGPS = position.coords.altitude; // Höhe in Metern über dem Meeresspiegel
         if (position.coords.heading !== null) {
           headingGPS = position.coords.heading; // Bewegungsrichtung in Grad
         }
@@ -116,6 +117,7 @@ function drawHeadingScale() {
   let scaleWidth = width * 0.8; // Skala über 80% der Bildschirmbreite
   let scaleHeight = 40; // Höhe der Skala
   let fieldOfView = 60; // ±60° um den aktuellen Kurs
+
   
   function drawGradientRect(x, y, w, h, color1, color2, color3) {
   noFill();
