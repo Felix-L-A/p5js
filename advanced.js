@@ -167,7 +167,7 @@ function drawInclinationIndicator() {
   fill(0);
   textSize(20);
   textStyle(NORMAL);
-  text(`heel: ${rotationY.toFixed(1)}°`, -30, 30);
+  text(`heeling: ${rotationY.toFixed(1)}°`, -30, 30);
   pop();
 }
 
