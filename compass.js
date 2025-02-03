@@ -1,3 +1,7 @@
+function setup() {
+  createCanvas(windowWidth, 400); // 2D-Canvas
+  textFont('sans-serif');
+
 function startCompass() {
     window.addEventListener("deviceorientation", (event) => {
         let heading;
