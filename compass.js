@@ -1,52 +1,53 @@
-function setup() {
-  createCanvas(windowWidth, 400); // 2D-Canvas
-  textFont('sans-serif');
+// GENERAL PURPOSE FUNCTIONS TO MANAGE MOBILE SENSOR PERMISSIONS
+// 1. Call setupMobile() in main setup() function
+// 2. Put the following line at the start of main draw() function:
+//    if (noMobileSensorInput()) return;
+// then put whatever you like after this line
+// with access to gyro and accelerometer values
+// Check the Events section for details:
+// https://p5js.org/reference/
 
-        document.getElementById("start-button").addEventListener("click", requestPermissions);
+let button;
+let permissionGranted = false;
 
-        function startCompass() {
-            if (!window.DeviceOrientationEvent) {
-                document.getElementById("compass-heading").innerText = "DeviceOrientation wird nicht unterstützt.";
-                return;
-            }
+function setupMobile() {
+  if (
+    typeof DeviceOrientationEvent !== "undefined" &&
+    typeof DeviceOrientationEvent.requestPermission === "function"
+  ) {
+    DeviceOrientationEvent.requestPermission()
+      .catch(() => {
+        button = createButton("ALLOW ACCESS TO SENSORS!");
+        button.style("font-size", "16px");
+        button.center();
+        button.mousePressed(requestAccess);
+        throw error;
+      })
+      .then(() => {
+        permissionGranted = true;
+      });
+  } else {
+    textSize(24);
+    text("NON/PRE IOS 13 DEVICE!", 0, 0, width, height);
+    permissionGranted = true;
+  }
+}
 
-            window.addEventListener("deviceorientation", (event) => {
-                let heading;
-                
-                if (event.webkitCompassHeading !== undefined) {
-                    // iOS gibt direkt magnetischen Norden aus
-                    heading = event.webkitCompassHeading;
-                } else if (event.alpha !== null) {
-                    // Android: Berechnung als Notlösung
-                    heading = (360 - event.alpha) % 360;
-                } else {
-                    document.getElementById("compass-heading").innerText = "Kompass-Sensor nicht verfügbar.";
-                    return;
-                }
+function requestAccess() {
+  DeviceOrientationEvent.requestPermission()
+    .then((response) => {
+      if (response == "granted") {
+        permissionGranted = true;
+      } else {
+        permissionGranted = false;
+      }
+    })
+    .catch(console.error);
+  this.remove();
+}
 
-                document.getElementById("compass-heading").innerText = 
-                    "Magnetische Richtung: " + heading.toFixed(2) + "°";
-            });
-        }
-
-        function requestPermissions() {
-            if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                DeviceMotionEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        console.log("Sensor-Zugriff erlaubt!");
-                        startCompass();
-                    } else {
-                        document.getElementById("compass-heading").innerText = "Zugriff auf Sensoren verweigert.";
-                    }
-                })
-                .catch(error => {
-                    console.error("Fehler beim Anfordern der Berechtigung:", error);
-                    document.getElementById("compass-heading").innerText = "Berechtigung konnte nicht angefordert werden.";
-                });
-            } else {
-                // Android braucht keine Extra-Freigabe
-                startCompass();
-            }
-        }
- 
+function noMobileSensorInput() {
+  let v = false;
+  if (!permissionGranted) v = true;
+  return v;
+}
